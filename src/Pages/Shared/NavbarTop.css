@@ -1,5 +1,0 @@
-/* Custom CSS for React Day Picker */
-.my-date-picker .DayPicker-Day--selected {
-    background-color: rgb(5, 5, 5); /* Change the background color to blue */
-    color: white; /* Change the text color to white */
-  }

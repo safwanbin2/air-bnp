@@ -3,13 +3,13 @@ import { DestinationContext } from '../../Contexts/DestinationProvider';
 
 const FilterModal = () => {
 
-    const { filters, setFilters, placeCount } = useContext(DestinationContext);
+    const { filters, setFilters, placeCount, refetchD, setRefetchD } = useContext(DestinationContext);
     const { maxPrice, bedRoom, bed, bathRoom, propertyType, type } = filters;
 
     const clearFilter = () => {
         setFilters({
             location: "",
-            subCategory: "",
+            subCategory: filters.subCategory,
             type: "",
             propertyType: "",
             capacity: "",
@@ -17,8 +17,9 @@ const FilterModal = () => {
             bed: "",
             bathRoom: "",
             minPrice: "",
-            maxPrice: 1000,
-        })
+            maxPrice: "",
+        });
+        setRefetchD(!refetchD)
     }
 
     return (
@@ -33,15 +34,24 @@ const FilterModal = () => {
                         <h2 className='text-2xl font-bold mb-2'>Type of Place</h2>
                         <p className='text-sm'>{type === "" && "Search rooms, entire homes and more. Nightly prices don't include fees or taxes."} {type === "room" && "A room in a home, plus access to shared spaces. Nightly prices don't include fees or taxes."} {type === "home" && "A home all to yourself. Nightly prices don't include fees or taxes."}</p>
                         <div className='mt-6 mx-auto btn-group btn-group-vertical lg:btn-group-horizontal justify-center items-center w-11/12 grid grid-cols-3 border rounded-xl'>
-                            <div onClick={() => setFilters((preFilters) => ({ ...preFilters, type: "" }))} className={`rounded-s-xl cursor-pointer font-semibold text-lg flex flex-col justify-center items-center p-6 border-e ${type === "" ? "bg-[#242424] text-white" : "bg-white text-black"}`}>Any Type</div>
-                            <div onClick={() => setFilters((preFilters) => ({ ...preFilters, type: "room" }))} className={`cursor-pointer font-semibold text-lg flex flex-col justify-center items-center p-6 ${type === "room" ? "bg-[#242424] text-white" : "bg-white text-black"}`}>Room</div>
-                            <div onClick={() => setFilters((preFilters) => ({ ...preFilters, type: "home" }))} className={`rounded-e-xl cursor-pointer font-semibold text-lg flex flex-col justify-center items-center p-6 border-s ${type === "home" ? "bg-[#242424] text-white" : "bg-white text-black"}`}>Entire Home</div>
+                            <div onClick={() => setFilters((preFilters) => ({ ...preFilters, type: "" }))} className={`rounded-s-xl cursor-pointer font-semibold text-base flex flex-col justify-center items-center px-6 py-4 border-e ${type === "" ? "bg-[#242424] text-white shadow-inner" : "bg-white text-black"}`}>
+                                <p>Any Type</p>
+                                <p className='text-sm font-normal'>$175 avg.</p>
+                            </div>
+                            <div onClick={() => setFilters((preFilters) => ({ ...preFilters, type: "room" }))} className={`cursor-pointer font-semibold text-base flex flex-col justify-center items-center px-6 py-4 ${type === "room" ? "bg-[#242424] text-white shadow-inner" : "bg-white text-black"}`}>
+                                <p>Room</p>
+                                <p className='text-sm font-normal'>$105 avg.</p>
+                            </div>
+                            <div onClick={() => setFilters((preFilters) => ({ ...preFilters, type: "home" }))} className={`rounded-e-xl cursor-pointer font-semibold text-base flex flex-col justify-center items-center px-6 py-4 border-s ${type === "home" ? "bg-[#242424] text-white shadow-inner" : "bg-white text-black"}`}>
+                                <p>Entire Home</p>
+                                <p className='text-sm font-normal'>$250 avg.</p>
+                            </div>
                         </div>
                     </div>
                     <div className='py-6 border-b'>
                         <h2 className='text-2xl font-semibold mb-2'>Price Range</h2>
                         <div className='w-11/12 mx-auto'>
-                            <input onChange={(e) => setFilters((prevFilters) => ({ ...prevFilters, maxPrice: parseInt(e.target.value) }))} type="range" min={0} defaultValue={maxPrice} max="1000" className="mt-6 range range-xs" />
+                            <input onChange={(e) => setFilters((prevFilters) => ({ ...prevFilters, maxPrice: parseInt(e.target.value) }))} type="range" min={0} defaultValue={""} max="1000" className="mt-6 range range-xs" />
                         </div>
                         <div className='grid items-center w-11/12 mx-auto mt-6' style={{ gridTemplateColumns: "3fr 1fr 3fr" }}>
                             <div className='py-2 ps-3 rounded-xl border border-black'>
@@ -51,7 +61,7 @@ const FilterModal = () => {
                             <div className='h-[1px] w-4/12 mx-auto bg-black'></div>
                             <div className='py-2 ps-3 rounded-xl border border-black'>
                                 <h4 className='text-sm'>Maximum</h4>
-                                <p>$ {maxPrice}</p>
+                                <p>$ {maxPrice ? maxPrice : "1000+"}</p>
                             </div>
                         </div>
                     </div>
@@ -124,7 +134,7 @@ const FilterModal = () => {
                 </div>
                 <div className='w-full flex justify-between items-center mt-6'>
                     <div onClick={clearFilter} className='font-semibold text-lg underline cursor-pointer'>Clear All</div>
-                    <button className='btn bg-[#242424] hover:bg-black text-white'>Show {placeCount} places</button>
+                    <button onClick={() => setRefetchD(!refetchD)} className='btn bg-[#242424] hover:bg-black text-white'>Show {placeCount} places</button>
                 </div>
             </form>
             <form method="dialog" className="modal-backdrop">
